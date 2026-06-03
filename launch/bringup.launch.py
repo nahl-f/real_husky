@@ -3,7 +3,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     namespace = "husky2"
-    params_file = "/home/administrator/nahl_ws/maps/robohub.yaml"
+    params_file = "/home/administrator/nahl_ws/real_husky/config/nav2_params.yaml"
 
     return LaunchDescription([
         # Map Server
@@ -13,7 +13,7 @@ def generate_launch_description():
             name="map_server",
             namespace=namespace,
             output="screen",
-            parameters=[{"yaml_filename": "/workspaces/husky_ws/test_ws/maps/robohub.yaml"}],
+            parameters=[{"yaml_filename": "/home/administrator/nahl_ws/maps/robohub.yaml"}],
             remappings=[
                 ("/tf", "/husky2/tf"),      
                 ("/tf_static", "/husky2/tf_static"),
