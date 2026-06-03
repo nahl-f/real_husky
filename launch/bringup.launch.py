@@ -1,0 +1,119 @@
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    namespace = "husky2"
+    params_file = "/workspaces/husky_ws/test_ws/husky_nav/config/nav2_params.yaml"
+
+    return LaunchDescription([
+        # Map Server
+        Node(
+            package="nav2_map_server",
+            executable="map_server",
+            name="map_server",
+            namespace=namespace,
+            output="screen",
+            parameters=[{"yaml_filename": "/workspaces/husky_ws/test_ws/maps/robohub.yaml"}],
+            remappings=[
+                ("/tf", "/husky2/tf"),      
+                ("/tf_static", "/husky2/tf_static"),
+            ],
+        ),
+
+        # AMCL
+        Node(
+            package="nav2_amcl",
+            executable="amcl",
+            name="amcl",
+            namespace=namespace,
+            output="screen",
+            parameters=[params_file,{"use_sim_time": True}],
+            remappings=[
+                ("scan", "sensors/lidar3d_0/scan"), 
+                ("odom", "platform/odom"), 
+                ("/tf", "/husky2/tf"),      
+                ("/tf_static", "/husky2/tf_static"),
+            ],
+        ),
+
+        # Planner Server
+        Node(
+            package="nav2_planner",
+            executable="planner_server",
+            name="planner_server",
+            namespace=namespace,
+            output="screen",
+            parameters=[params_file, {
+                "use_sim_time": True,
+                "global_costmap.global_costmap.robot_base_frame": "base_link", # Or 'husky2/base_link'
+                "global_costmap.global_costmap.obstacle_layer.scan.topic": "/husky2/sensors/lidar3d_0/scan",
+            }],
+            remappings=[("/tf", "/husky2/tf"), ("/tf_static", "/husky2/tf_static")],
+        ),
+
+        # Controller Server
+        Node(
+            package="nav2_controller",
+            executable="controller_server",
+            name="controller_server",
+            namespace=namespace,
+            output="screen",
+            parameters=[params_file, {
+                "use_sim_time": True,
+                "local_costmap.local_costmap.robot_base_frame": "base_link",
+                "local_costmap.local_costmap.voxel_layer.scan.topic": "/husky2/sensors/lidar3d_0/scan",
+            }],
+            remappings=[("/tf", "/husky2/tf"), 
+                        ("/tf_static", "/husky2/tf_static"),
+                        ("odom", "platform/odom")],
+        ),
+
+        # Behavior Tree Navigator
+        Node(
+            package="nav2_bt_navigator",
+            executable="bt_navigator",
+            name="bt_navigator",
+            namespace=namespace,
+            output="screen",
+            parameters=[params_file, {"use_sim_time": True}],
+            remappings=[("/tf", "/husky2/tf"), 
+                        ("/tf_static", "/husky2/tf_static"),
+                        ("odom", "platform/odom"),
+                        ("scan", "sensors/lidar3d_0/scan")],
+        ),
+
+        # Behavior Server
+        Node(
+            package="nav2_behaviors",
+            executable="behavior_server",
+            name="behavior_server",
+            namespace=namespace,
+            output="screen",
+            parameters=[params_file, {"use_sim_time": True}],
+            remappings=[("/tf", "/husky2/tf"), 
+                        ("/tf_static", "/husky2/tf_static"),
+                        ("odom", "platform/odom"),
+                        ("scan", "sensors/lidar3d_0/scan")],
+        ),
+
+        # Lifecycle Manager
+        Node(
+            package="nav2_lifecycle_manager",
+            executable="lifecycle_manager",
+            name="lifecycle_manager",
+            namespace=namespace,
+            output="screen",
+            parameters=[{
+                "use_sim_time": True,
+                "autostart": True,
+                "node_names": [
+                    "map_server", 
+                    "amcl", 
+                    "planner_server", 
+                    "controller_server", 
+                    "bt_navigator",
+                    "behavior_server"
+                ], 
+            }],
+        ),
+    ])
