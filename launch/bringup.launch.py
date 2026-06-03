@@ -27,7 +27,7 @@ def generate_launch_description():
             name="amcl",
             namespace=namespace,
             output="screen",
-            parameters=[params_file,{"use_sim_time": True}],
+            parameters=[params_file,{"use_sim_time": False}],
             remappings=[
                 ("scan", "sensors/lidar3d_0/scan"), 
                 ("odom", "platform/odom"), 
@@ -44,7 +44,7 @@ def generate_launch_description():
             namespace=namespace,
             output="screen",
             parameters=[params_file, {
-                "use_sim_time": True,
+                "use_sim_time": False,
                 "global_costmap.global_costmap.robot_base_frame": "base_link", # Or 'husky2/base_link'
                 "global_costmap.global_costmap.obstacle_layer.scan.topic": "/husky2/sensors/lidar3d_0/scan",
             }],
@@ -59,7 +59,7 @@ def generate_launch_description():
             namespace=namespace,
             output="screen",
             parameters=[params_file, {
-                "use_sim_time": True,
+                "use_sim_time": False,
                 "local_costmap.local_costmap.robot_base_frame": "base_link",
                 "local_costmap.local_costmap.voxel_layer.scan.topic": "/husky2/sensors/lidar3d_0/scan",
             }],
@@ -75,7 +75,7 @@ def generate_launch_description():
             name="bt_navigator",
             namespace=namespace,
             output="screen",
-            parameters=[params_file, {"use_sim_time": True}],
+            parameters=[params_file, {"use_sim_time": False}],
             remappings=[("/tf", "/husky2/tf"), 
                         ("/tf_static", "/husky2/tf_static"),
                         ("odom", "platform/odom"),
@@ -89,7 +89,7 @@ def generate_launch_description():
             name="behavior_server",
             namespace=namespace,
             output="screen",
-            parameters=[params_file, {"use_sim_time": True}],
+            parameters=[params_file, {"use_sim_time": False}],
             remappings=[("/tf", "/husky2/tf"), 
                         ("/tf_static", "/husky2/tf_static"),
                         ("odom", "platform/odom"),
@@ -104,7 +104,7 @@ def generate_launch_description():
             namespace=namespace,
             output="screen",
             parameters=[{
-                "use_sim_time": True,
+                "use_sim_time": False,
                 "autostart": True,
                 "node_names": [
                     "map_server", 
