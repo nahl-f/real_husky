@@ -27,6 +27,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'points = real_husky.points:main',
         ],
     },
 )
