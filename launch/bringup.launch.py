@@ -4,7 +4,8 @@ from launch_ros.actions import Node
 def generate_launch_description():
     namespace = "husky2"
     params_file = "/home/administrator/nahl_ws/real_husky/config/nav2_params.yaml"
-
+    #map = "/home/administrator/nahl_ws/maps/robohub.yaml"
+    map = "/home/administrator/nahl_ws/maps/maps/saved_husky_map.yaml"
     return LaunchDescription([
         # Map Server
         Node(
@@ -13,7 +14,7 @@ def generate_launch_description():
             name="map_server",
             namespace=namespace,
             output="screen",
-            parameters=[{"yaml_filename": "/home/administrator/nahl_ws/maps/robohub.yaml"}],
+            parameters=[{"yaml_filename": map}],
             remappings=[
                 ("/tf", "/husky2/tf"),      
                 ("/tf_static", "/husky2/tf_static"),
